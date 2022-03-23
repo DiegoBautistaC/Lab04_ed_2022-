@@ -31,5 +31,7 @@ namespace Lab04_ed_2022.Models
         [MaxLength(10)]
         [MinLength(5)]
         public string MetodoIngreso { get; set; }
+
+        public DateTime HoraIngreso { get; set; }
     }
 }
