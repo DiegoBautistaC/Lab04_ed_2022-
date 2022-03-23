@@ -10,6 +10,8 @@ namespace ClassLibrary
     {
         public PriorityNode<T> Root;
 
+        PriorityNode<T> LastFather;
+
         public delegate int PrimerDelegado(T value);
         PrimerDelegado PriorityFunc;
 
@@ -19,6 +21,7 @@ namespace ClassLibrary
         public QueuePriority(PrimerDelegado priorityFunc, SegundoDelegado comparator1)
         {
             this.Root = null;
+            this.LastFather = null;
             this.PriorityFunc = priorityFunc;
             this.Comparator1 = comparator1;
         }
@@ -36,10 +39,14 @@ namespace ClassLibrary
                 if (actualNode.Left == null && actualNode.Rigth == null)
                 {
                     actualNode.Left = newNode;
+                    actualNode.Height = actualNode.Left.Height + 1;
+                    this.LastFather = actualNode;
                 }
                 else if (actualNode.Rigth == null)
                 {
                     actualNode.Rigth = newNode;
+                    actualNode.Height = Math.Max(actualNode.Left.Height, actualNode.Rigth.Height);
+                    this.LastFather = actualNode;
                 }
                 else
                 {
@@ -56,16 +63,48 @@ namespace ClassLibrary
             }
             else
             {
-                
                 this.Root = newNode;
                 return true;
             }
         }
 
-        public bool Remove()
+        /// <summary>
+        /// Método para remover de la cola de prioridad al primer elemento (raiz) con mayor prioridad
+        /// x = padre del último valor insertado
+        /// xS = último valor insertado
+        /// y = raiz
+        /// </summary>
+        /// <returns>El valor removido de la cola de prioridad</returns>
+        public T Remove()
         {
-            //Falta implementación
-            return true;
+            if (this.Root != null)
+            {
+                if (this.Root.Left == null && this.Root.Rigth == null)
+                {
+                    PriorityNode<T> aux = this.Root;
+                    this.Root = null;
+                    return aux.Value;
+                }
+                else
+                {
+                    var x = this.Root;
+                    PriorityNode<T> y;
+                    if (this.LastFather.Rigth != null)
+                    {
+                        y = this.LastFather.Rigth;
+                        this.LastFather.Rigth = null;
+                    }
+                    else
+                    {
+                        y = this.LastFather.Left;
+                        this.LastFather.Left = null;
+                    }
+                    y.Left = x.Left;
+                    y.Rigth = x.Rigth;
+                    this.Root = y
+                }
+            }
+            return default(T);
         }
 
         public T Consulta()
