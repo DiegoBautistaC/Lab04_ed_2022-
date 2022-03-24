@@ -20,5 +20,6 @@ namespace Lab04_ed_2022.Helpers
                 return _instance;
             }
         }
+
     }
 }
