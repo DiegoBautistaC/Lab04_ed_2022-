@@ -10,6 +10,8 @@ namespace ClassLibrary
     {
         public PriorityNode<T> Root;
 
+        int LastPosition;
+
         PriorityNode<T> LastFather;
 
         public delegate int PrimerDelegado(T value);
@@ -21,6 +23,7 @@ namespace ClassLibrary
         public QueuePriority(PrimerDelegado priorityFunc, SegundoDelegado comparator1)
         {
             this.Root = null;
+            this.LastPosition = 0;
             this.LastFather = null;
             this.PriorityFunc = priorityFunc;
             this.Comparator1 = comparator1;
