@@ -11,7 +11,9 @@ namespace ClassLibrary
         public T Value { get; set; }
         public int Priority { get; set; }
         public int Height { get; set; }
+
         public PriorityNode<T> Left;
+
         public PriorityNode<T> Rigth;
 
         public PriorityNode(T value)

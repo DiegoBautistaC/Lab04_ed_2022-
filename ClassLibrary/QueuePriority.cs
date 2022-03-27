@@ -10,9 +10,9 @@ namespace ClassLibrary
     {
         public PriorityNode<T> Root;
 
-        int LastPosition;
-
         PriorityNode<T> LastFather;
+
+        public int Length { get; set; }
 
         public delegate int PrimerDelegado(T value);
         PrimerDelegado PriorityFunc;
@@ -23,7 +23,6 @@ namespace ClassLibrary
         public QueuePriority(PrimerDelegado priorityFunc, SegundoDelegado comparator1)
         {
             this.Root = null;
-            this.LastPosition = 0;
             this.LastFather = null;
             this.PriorityFunc = priorityFunc;
             this.Comparator1 = comparator1;
@@ -31,75 +30,42 @@ namespace ClassLibrary
 
         public bool Insert(T value)
         {
-            return Insert(value, ref this.Root);
+            Insert(value, BinaryPosition(this.Length + 1), ref this.Root);
+            return true;
         }
 
-        public bool Insert(T value, ref PriorityNode<T> actualNode)
+        public void Insert(T value, string position, ref PriorityNode<T> actualNode)
         {
             PriorityNode<T> newNode = new PriorityNode<T>(value);
-            if (!this.IsEmpty())
+            if (actualNode == null)
             {
-                if (actualNode.Left == null)
+                actualNode = newNode;
+                this.Length++;
+            }
+            else
+            {
+                position = position.Substring(1);
+                int place = Convert.ToInt32(position.Substring(0,1));
+                if (place == 0)
                 {
-                    actualNode.Left = newNode;
-                    this.LastFather = actualNode;
-                }
-                else if (actualNode.Rigth == null)
-                {
-                    actualNode.Rigth = newNode;
-                    this.LastFather = actualNode;
+                    this.Insert(value, position, ref actualNode.Left);
                 }
                 else
                 {
-                    if (actualNode.Left.Height == actualNode.Rigth.Height && actualNode.Left.Height == 1)
-                    {
-                        return Insert(value, ref actualNode.Left);
-                    }
-                    else if (actualNode.Left.Height == actualNode.Rigth.Height && actualNode.Left.Height > 1)
-                    {
-                        return Insert(value, ref actualNode.Rigth);
-                    }
-                    else
-                    {
-                        if (actualNode.Left.Height == 2)
-                        {
-                            if (actualNode.Left.Left != null && actualNode.Left.Rigth != null)
-                            {
-                                return Insert(value, ref actualNode.Rigth);
-                            }
-                            else
-                            {
-                                return Insert(value, ref actualNode.Left);
-                            }
-                        }
-                        else
-                        {
-                            return Insert(value, ref actualNode.Left);
-                        }
-                    }
+                    this.Insert(value, position, ref actualNode.Rigth);
                 }
-                if (actualNode.Left != null)
-                {
-                    actualNode.Height = 1 + actualNode.Left.Height;
-                }
-                return true;
-            }
-            else
-            {
-                this.Root = newNode;
-                return true;
-            }
+        }
         }
 
-        bool FormaInvariante(PriorityNode<T> actualNode)
+        string BinaryPosition(int n)
         {
-            if (actualNode.Left != null && actualNode.Rigth == null)
+            if (n < 2)
             {
-                return false;
+                return n.ToString();
             }
             else
             {
-                return FormaInvariante(actualNode.Left) ;
+                return BinaryPosition(n / 2) + (n % 2).ToString();
             }
         }
 
@@ -174,21 +140,6 @@ namespace ClassLibrary
                 T aux = actualNode.Value;
                 actualNode.Value = actualNode.Left.Value;
                 actualNode.Left.Value = aux;
-            }
-        }
-
-        /// <summary>
-        /// Función utilizada en la recursión de la función insertar para recuperar el orden invariante luego de haber insertado un valor en la cola de prioridad
-        /// </summary>
-        /// <param name="father">Nodo padre para comparar prioridad con hijo</param>
-        /// <param name="son">Nodo hijo para comparar prioridad con padre</param>
-        void OrdenInvarianteUp(ref PriorityNode<T> father, ref PriorityNode<T> son)
-        {
-            if (Comparator1(son.Value, father.Value))
-            {
-                T aux = father.Value;
-                father.Value = son.Value;
-                son.Value = father.Value;
             }
         }
 
