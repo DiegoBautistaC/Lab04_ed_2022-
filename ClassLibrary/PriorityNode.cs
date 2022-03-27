@@ -10,7 +10,6 @@ namespace ClassLibrary
     {
         public T Value { get; set; }
         public int Priority { get; set; }
-        public int Height { get; set; }
 
         public PriorityNode<T> Left;
 
@@ -20,7 +19,6 @@ namespace ClassLibrary
         {
             this.Value = value;
             this.Priority = 0;
-            this.Height = 1;
             this.Left = null;
             this.Rigth = null;
         }

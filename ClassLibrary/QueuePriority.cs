@@ -18,14 +18,14 @@ namespace ClassLibrary
         PrimerDelegado PriorityFunc;
 
         public delegate bool SegundoDelegado(T v1, T v2);
-        SegundoDelegado Comparator1;
+        SegundoDelegado Comparator;
 
         public QueuePriority(PrimerDelegado priorityFunc, SegundoDelegado comparator1)
         {
             this.Root = null;
             this.LastFather = null;
             this.PriorityFunc = priorityFunc;
-            this.Comparator1 = comparator1;
+            this.Comparator = comparator1;
         }
 
         public bool Insert(T value)
@@ -49,14 +49,17 @@ namespace ClassLibrary
                 if (place == 0)
                 {
                     this.Insert(value, position, ref actualNode.Left);
+                    this.InvariantSortDown(ref actualNode);
                 }
                 else
                 {
                     this.Insert(value, position, ref actualNode.Rigth);
+                    this.InvariantSortDown(ref actualNode);
                 }
-        }
+            }
         }
 
+        // Conversión binaria de un número por medio de una función recrusiva 
         string BinaryPosition(int n)
         {
             if (n < 2)
@@ -66,6 +69,38 @@ namespace ClassLibrary
             else
             {
                 return BinaryPosition(n / 2) + (n % 2).ToString();
+            }
+        }
+
+        /// <summary>
+        /// Método recursivo que recupera el orden invariante comparando la raiz con sus hijos por cada nodo que recibe como parámetro.
+        /// </summary>
+        /// <param name="actualNode">Nodo utilizado para comparar la prioridad con sus hijos izquierdo y derecho</param>
+        void InvariantSortDown(ref PriorityNode<T> actualNode)
+        {
+            if (actualNode.Rigth != null && actualNode.Left != null)
+            {
+                if (Comparator(actualNode.Left.Value, actualNode.Value) || Comparator(actualNode.Rigth.Value, actualNode.Value))
+                {
+                    if (Comparator(actualNode.Left.Value, actualNode.Rigth.Value))
+                    {
+                        T aux = actualNode.Value;
+                        actualNode.Value = actualNode.Left.Value;
+                        actualNode.Left.Value = aux;
+                    }
+                    else
+                    {
+                        T aux = actualNode.Value;
+                        actualNode.Value = actualNode.Rigth.Value;
+                        actualNode.Rigth.Value = aux;
+                    }
+                }
+            }
+            else if (actualNode.Rigth == null && Comparator(actualNode.Left.Value, actualNode.Value))
+            {
+                T aux = actualNode.Value;
+                actualNode.Value = actualNode.Left.Value;
+                actualNode.Left.Value = aux;
             }
         }
 
@@ -102,45 +137,11 @@ namespace ClassLibrary
                     y.Left = x.Left;
                     y.Rigth = x.Rigth;
                     this.Root = y;
-                    this.OrdenInvarianteDown(ref this.Root);
+                    this.InvariantSortDown(ref this.Root);
                     
                 }
             }
             return default(T);
-        }
-
-        /// <summary>
-        /// Función recursiva que recupera el orden invariante luego de haber eliminado el primer elemento de la cola de prioridad
-        /// </summary>
-        /// <param name="actualNode">Nodo utilizado para comparar la prioridad con sus hijos izquierdo y derecho</param>
-        void OrdenInvarianteDown(ref PriorityNode<T> actualNode)
-        {
-            if (actualNode.Rigth != null && actualNode.Left != null)
-            {
-                if (Comparator1(actualNode.Value, actualNode.Left.Value) || Comparator1(actualNode.Value, actualNode.Rigth.Value))
-                {
-                    if (Comparator1(actualNode.Left.Value, actualNode.Rigth.Value))
-                    {
-                        T aux = actualNode.Value;
-                        actualNode.Value = actualNode.Left.Value;
-                        actualNode.Left.Value = aux;
-                        this.OrdenInvarianteDown(ref actualNode.Left);
-                    }
-                    else
-                    {
-                        T aux = actualNode.Value;
-                        actualNode.Value = actualNode.Rigth.Value;
-                        actualNode.Rigth.Value = aux;
-                        this.OrdenInvarianteDown(ref actualNode.Rigth);
-                    }
-                }
-            }
-            else if (actualNode.Rigth == null)
-            {
-                T aux = actualNode.Value;
-                actualNode.Value = actualNode.Left.Value;
-                actualNode.Left.Value = aux;
-            }
         }
 
         /// <summary>
