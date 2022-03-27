@@ -26,20 +26,6 @@ namespace Lab04_ed_2022.Controllers
 
         public IActionResult Privacy()
         {
-
-            Data.Instance.Prueba.Insert(15);
-            Data.Instance.Prueba.Insert(3);
-            Data.Instance.Prueba.Insert(22);
-            Data.Instance.Prueba.Insert(5);
-            Data.Instance.Prueba.Insert(10);
-            Data.Instance.Prueba.Insert(12);
-            Data.Instance.Prueba.Insert(35);
-            Data.Instance.Prueba.Insert(90);
-            Data.Instance.Prueba.Insert(27);
-            Data.Instance.Prueba.Insert(43);
-            Data.Instance.Prueba.Insert(67);
-
-
             return View();
         }
 

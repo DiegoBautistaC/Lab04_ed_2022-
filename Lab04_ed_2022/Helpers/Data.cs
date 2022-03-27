@@ -23,8 +23,6 @@ namespace Lab04_ed_2022.Helpers
             }
         }
 
-        public QueuePriority<int> Prueba = new QueuePriority<int>((int v) => 1, (int v1, int v2) => v1 > v2);
-
-        public QueuePriority<PacienteModel> SalaConsultas = new QueuePriority<PacienteModel>((PacienteModel v)=> 2, (PacienteModel v1, PacienteModel v2) => v1.ID > v2.ID);
+        public QueuePriority<PacienteModel> SalaConsultas = new QueuePriority<PacienteModel>(PacienteModel.Prioridad, (PriorityNode<PacienteModel> v1, PriorityNode<PacienteModel> v2) => v1.Priority > v2.Priority);
     }
 }
