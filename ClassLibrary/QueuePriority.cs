@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ClassLibrary
 {
-    public class QueuePriority <T>
+    public class QueuePriority <T> : IEnumerable<T>
     {
         public PriorityNode<T> Root;
 
@@ -175,7 +176,7 @@ namespace ClassLibrary
             return default(T);
         }
 
-        // Método recursico utilizado para ordenar de forma invariante la cola de prioridad luego de haber eliminado el elemento con mayor prioridad
+        // Método recursivo utilizado para ordenar de forma invariante la cola de prioridad luego de haber eliminado el elemento con mayor prioridad
         void InvariantSortToDown(ref PriorityNode<T> actualNode)
         {
             if (actualNode.Rigth != null && actualNode.Left != null)
@@ -225,6 +226,35 @@ namespace ClassLibrary
         bool IsEmpty()
         {
             return this.Root == null;
+        }
+
+        void Read(ref CustomQueue<T> queue, QueuePriority<T> root)
+        {
+            if (root != null)
+            {
+                var value = root.Remove();
+                queue.Encolar(value);
+                this.Read(ref queue, root);
+            }
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            if (!this.IsEmpty())
+            {
+                var cola = new CustomQueue<T>();
+                var colaPrioridad = this;
+                colaPrioridad.Read(ref cola, colaPrioridad);
+                while (!cola.IsEmpty())
+                {
+                    yield return cola.Desencolar();
+                }
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using Lab04_ed_2022.Helpers;
 
 namespace Lab04_ed_2022.Models
 {
@@ -34,6 +35,12 @@ namespace Lab04_ed_2022.Models
 
         public DateTime HoraIngreso { get; set; }
 
+
+        public static bool Guardar(PacienteModel paciente)
+        {
+            Data.Instance.SalaConsultas.Insert(paciente);
+            return true;
+        }
 
         public static int Prioridad(PacienteModel paciente)
         {

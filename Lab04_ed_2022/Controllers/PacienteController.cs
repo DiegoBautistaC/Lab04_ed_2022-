@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Lab04_ed_2022.Helpers;
+using Lab04_ed_2022.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,7 +14,7 @@ namespace Lab04_ed_2022.Controllers
         // GET: PacienteController
         public ActionResult Index()
         {
-            return View();
+            return View(Data.Instance.SalaConsultas);
         }
 
         // GET: PacienteController/Details/5
@@ -24,7 +26,7 @@ namespace Lab04_ed_2022.Controllers
         // GET: PacienteController/Create
         public ActionResult Create()
         {
-            return View();
+            return View(new PacienteModel());
         }
 
         // POST: PacienteController/Create
@@ -34,7 +36,21 @@ namespace Lab04_ed_2022.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var validacion = PacienteModel.Guardar(new PacienteModel
+                {
+                    Nombres = collection["Nombres"],
+                    Apellidos = collection["Apellidos"],
+                    FechaDeNacimiento = Convert.ToDateTime(collection["FechaDeNacimiento"]),
+                    Sexo = collection["Sexo"],
+                    Especializacion = collection["Especializacion"],
+                    MetodoIngreso = collection["MetodoIngreso"],
+                    HoraIngreso = Convert.ToDateTime(collection["HoraIngreso"])
+                });
+                if (validacion)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return View();
             }
             catch
             {
