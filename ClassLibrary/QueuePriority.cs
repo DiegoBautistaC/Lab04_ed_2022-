@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,189 +7,219 @@ using System.Threading.Tasks;
 
 namespace ClassLibrary
 {
-    public class QueuePriority <T>
+    public class QueuePriority <T> : IEnumerable<T>
     {
         public PriorityNode<T> Root;
 
-        int LastPosition;
-
-        PriorityNode<T> LastFather;
+        public int Length { get; set; }
 
         public delegate int PrimerDelegado(T value);
         PrimerDelegado PriorityFunc;
 
-        public delegate bool SegundoDelegado(T v1, T v2);
-        SegundoDelegado Comparator1;
+        public delegate bool SegundoDelegado(PriorityNode<T> v1, PriorityNode<T> v2);
+        SegundoDelegado Comparator;
 
         public QueuePriority(PrimerDelegado priorityFunc, SegundoDelegado comparator1)
         {
             this.Root = null;
-            this.LastPosition = 0;
-            this.LastFather = null;
             this.PriorityFunc = priorityFunc;
-            this.Comparator1 = comparator1;
+            this.Comparator = comparator1;
         }
 
-        public bool Insert(T value)
-        {
-            return Insert(value, ref this.Root);
-        }
-
-        public bool Insert(T value, ref PriorityNode<T> actualNode)
+        //Método invocable para insertar valores que recibe como parámetro el elemento a insertar.
+        public void Insert(T value)
         {
             PriorityNode<T> newNode = new PriorityNode<T>(value);
-            if (!this.IsEmpty())
+            newNode.Priority = this.PriorityFunc(value);
+            Insert(newNode, BinaryPosition(this.Length + 1), ref this.Root);
+        }
+
+        /// <summary>
+        /// Método que inserta un elemento en el heap por medio de recursión y también posicionamiento binario.
+        /// </summary>
+        /// <param name="newNode">El nodo que contiene el valor que será incertado.</param>
+        /// <param name="position">Inidicaciones binarias de hacia a qué lado insertar.</param>
+        /// <param name="actualNode">La raíz actual que se está evaluando durante la ejecución</param>
+        public void Insert(PriorityNode<T> newNode, string position, ref PriorityNode<T> actualNode)
+        {
+            if (actualNode == null)
             {
-                if (actualNode.Left == null)
+                actualNode = newNode;
+                this.Length++;
+            }
+            else
+            {
+                position = position.Substring(1);
+                int place = Convert.ToInt32(position.Substring(0, 1));
+                if (place == 0)
                 {
-                    actualNode.Left = newNode;
-                    this.LastFather = actualNode;
-                }
-                else if (actualNode.Rigth == null)
-                {
-                    actualNode.Rigth = newNode;
-                    this.LastFather = actualNode;
+                    this.Insert(newNode, position, ref actualNode.Left);
+                    this.InvariantSortToUp(ref actualNode);
                 }
                 else
                 {
-                    if (actualNode.Left.Height == actualNode.Rigth.Height && actualNode.Left.Height == 1)
-                    {
-                        return Insert(value, ref actualNode.Left);
-                    }
-                    else if (actualNode.Left.Height == actualNode.Rigth.Height && actualNode.Left.Height > 1)
-                    {
-                        return Insert(value, ref actualNode.Rigth);
-                    }
-                    else
-                    {
-                        if (actualNode.Left.Height == 2)
-                        {
-                            if (actualNode.Left.Left != null && actualNode.Left.Rigth != null)
-                            {
-                                return Insert(value, ref actualNode.Rigth);
-                            }
-                            else
-                            {
-                                return Insert(value, ref actualNode.Left);
-                            }
-                        }
-                        else
-                        {
-                            return Insert(value, ref actualNode.Left);
-                        }
-                    }
+                    this.Insert(newNode, position, ref actualNode.Rigth);
+                    this.InvariantSortToUp(ref actualNode);
                 }
-                if (actualNode.Left != null)
-                {
-                    actualNode.Height = 1 + actualNode.Left.Height;
-                }
-                return true;
-            }
-            else
-            {
-                this.Root = newNode;
-                return true;
             }
         }
 
-        bool FormaInvariante(PriorityNode<T> actualNode)
+        // Conversión binaria de un número por medio de una función recrusiva 
+        string BinaryPosition(int n)
         {
-            if (actualNode.Left != null && actualNode.Rigth == null)
+            if (n < 2)
             {
-                return false;
+                return n.ToString();
             }
             else
             {
-                return FormaInvariante(actualNode.Left) ;
+                return BinaryPosition(n / 2) + (n % 2).ToString();
             }
         }
 
         /// <summary>
-        /// Método para remover de la cola de prioridad al primer elemento (raiz) con mayor prioridad
-        /// x = raiz
-        /// y = último valor insertado
+        /// Método recursivo que recupera el orden invariante comparando la raiz con sus hijos por cada nodo que recibe como parámetro.
         /// </summary>
-        /// <returns>El valor removido de la cola de prioridad</returns>
-        public T Remove()
+        /// <param name="actualNode">Nodo utilizado para comparar la prioridad con sus hijos izquierdo y derecho</param>
+        void InvariantSortToUp(ref PriorityNode<T> actualNode)
         {
-            if (this.Root != null)
+            if (actualNode.Rigth != null && actualNode.Left != null)
             {
-                if (this.Root.Left == null && this.Root.Rigth == null)
+                if (Comparator(actualNode.Left, actualNode) || Comparator(actualNode.Rigth, actualNode))
                 {
-                    PriorityNode<T> aux = this.Root;
-                    this.Root = null;
-                    return aux.Value;
-                }
-                else
-                {
-                    var x = this.Root;
-                    PriorityNode<T> y;
-                    if (this.LastFather.Rigth != null)
+                    T aux = actualNode.Value;
+                    if (Comparator(actualNode.Left, actualNode.Rigth))
                     {
-                        y = this.LastFather.Rigth;
-                        this.LastFather.Rigth = null;
+                        actualNode.Value = actualNode.Left.Value;
+                        actualNode.Priority = this.PriorityFunc(actualNode.Value);
+                        actualNode.Left.Value = aux;
+                        actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
                     }
                     else
                     {
-                        y = this.LastFather.Left;
-                        this.LastFather.Left = null;
+                        actualNode.Value = actualNode.Rigth.Value;
+                        actualNode.Priority = this.PriorityFunc(actualNode.Value);
+                        actualNode.Rigth.Value = aux;
+                        actualNode.Rigth.Priority = this.PriorityFunc(actualNode.Rigth.Value);
                     }
-                    y.Left = x.Left;
-                    y.Rigth = x.Rigth;
-                    this.Root = y;
-                    this.OrdenInvarianteDown(ref this.Root);
-                    
+                }
+            }
+            else if (actualNode.Rigth == null && Comparator(actualNode.Left, actualNode))
+            {
+                T aux = actualNode.Value;
+                actualNode.Value = actualNode.Left.Value;
+                actualNode.Priority = this.PriorityFunc(actualNode.Value);
+                actualNode.Left.Value = aux;
+                actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
+            }
+        }
+
+       //Método invocable para remover el elemnto con mayor prioridad de la cola de prioridad
+        public T Remove()
+        {
+            return Remove(BinaryPosition(this.Length), ref this.Root);
+        }
+
+        /// <summary>
+        /// Método que encuentra recursivamente el elemento que será eliminado y ejecuta el prodecimiento para mantener el orden y forma invariante
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="actualNode"></param>
+        /// <returns></returns>
+        T Remove(string position, ref PriorityNode<T> actualNode)
+        {
+            if (!this.IsEmpty())
+            {
+                if (position.Length == 1)
+                {
+                    T eliminate = this.Root.Value;
+                    this.Root = null;
+                    this.Length--;
+                    return eliminate;
+                }
+                else
+                {
+                    if (position.Length == 2)
+                    {
+                        position = position.Substring(1);
+                        int place = Convert.ToInt32(position.Substring(0, 1));
+                        T eliminate = this.Root.Value;
+                        if (place == 0)
+                        {
+                            PriorityNode<T> aux = actualNode.Left;
+                            actualNode.Left = null;
+                            aux.Left = this.Root.Left;
+                            aux.Rigth = this.Root.Rigth;
+                            this.Root = aux;
+                            this.Root.Priority = this.PriorityFunc(this.Root.Value);
+                            this.InvariantSortToDown(ref this.Root);
+                            this.Length--;
+                            return eliminate;
+                        }
+                        else
+                        {
+                            PriorityNode<T> aux = actualNode.Rigth;
+                            actualNode.Rigth = null;
+                            aux.Left = this.Root.Left;
+                            aux.Rigth = this.Root.Rigth;
+                            this.Root = aux;
+                            this.Root.Priority = this.PriorityFunc(this.Root.Value);
+                            this.InvariantSortToDown(ref this.Root);
+                            this.Length--;
+                            return eliminate;
+                        }
+                    }
+                    else
+                    {
+                        position = position.Substring(1);
+                        int place = Convert.ToInt32(position.Substring(0, 1));
+                        if (place == 0)
+                        {
+                            return this.Remove(position, ref actualNode.Left);
+                        }
+                        else
+                        {
+                            return this.Remove(position, ref actualNode.Rigth);
+                        }
+                    }
                 }
             }
             return default(T);
         }
 
-        /// <summary>
-        /// Función recursiva que recupera el orden invariante luego de haber eliminado el primer elemento de la cola de prioridad
-        /// </summary>
-        /// <param name="actualNode">Nodo utilizado para comparar la prioridad con sus hijos izquierdo y derecho</param>
-        void OrdenInvarianteDown(ref PriorityNode<T> actualNode)
+        // Método recursivo utilizado para ordenar de forma invariante la cola de prioridad luego de haber eliminado el elemento con mayor prioridad
+        void InvariantSortToDown(ref PriorityNode<T> actualNode)
         {
             if (actualNode.Rigth != null && actualNode.Left != null)
             {
-                if (Comparator1(actualNode.Value, actualNode.Left.Value) || Comparator1(actualNode.Value, actualNode.Rigth.Value))
+                if (Comparator(actualNode.Left, actualNode) || Comparator(actualNode.Rigth, actualNode))
                 {
-                    if (Comparator1(actualNode.Left.Value, actualNode.Rigth.Value))
+                    T aux = actualNode.Value;
+                    if (Comparator(actualNode.Left, actualNode.Rigth))
                     {
-                        T aux = actualNode.Value;
                         actualNode.Value = actualNode.Left.Value;
+                        actualNode.Priority = this.PriorityFunc(actualNode.Value);
                         actualNode.Left.Value = aux;
-                        this.OrdenInvarianteDown(ref actualNode.Left);
+                        actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
+                        this.InvariantSortToDown(ref actualNode.Left);
                     }
                     else
                     {
-                        T aux = actualNode.Value;
                         actualNode.Value = actualNode.Rigth.Value;
+                        actualNode.Priority = this.PriorityFunc(actualNode.Value);
                         actualNode.Rigth.Value = aux;
-                        this.OrdenInvarianteDown(ref actualNode.Rigth);
+                        actualNode.Rigth.Priority = this.PriorityFunc(actualNode.Rigth.Value);
+                        this.InvariantSortToDown(ref actualNode.Left);
                     }
                 }
             }
-            else if (actualNode.Rigth == null)
+            else if (actualNode.Rigth == null && actualNode.Left != null && Comparator(actualNode.Left, actualNode))
             {
                 T aux = actualNode.Value;
                 actualNode.Value = actualNode.Left.Value;
+                actualNode.Priority = this.PriorityFunc(actualNode.Value);
                 actualNode.Left.Value = aux;
-            }
-        }
-
-        /// <summary>
-        /// Función utilizada en la recursión de la función insertar para recuperar el orden invariante luego de haber insertado un valor en la cola de prioridad
-        /// </summary>
-        /// <param name="father">Nodo padre para comparar prioridad con hijo</param>
-        /// <param name="son">Nodo hijo para comparar prioridad con padre</param>
-        void OrdenInvarianteUp(ref PriorityNode<T> father, ref PriorityNode<T> son)
-        {
-            if (Comparator1(son.Value, father.Value))
-            {
-                T aux = father.Value;
-                father.Value = son.Value;
-                son.Value = father.Value;
+                actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
             }
         }
 
@@ -196,11 +227,27 @@ namespace ClassLibrary
         /// Función para consultar el valor que se encuentra delante de la cola con mayor prioridad
         /// </summary>
         /// <returns>Primero valor con mayor prioridad en la cola de prioridad</returns>
-        public T Consulta()
+        public T Consulta(PriorityNode<T> actualNode, string position)
         {
-            if (this.Root != null)
+            if (!this.IsEmpty())
             {
-                return this.Root.Value;
+                if (position.Length == 1)
+                {
+                    return actualNode.Value;
+                }
+                else
+                {
+                    position = position.Substring(1);
+                    int place = Convert.ToInt32(position.Substring(0, 1));
+                    if (place == 0)
+                    {
+                        return Consulta(actualNode.Left, position);
+                    }
+                    else
+                    {
+                        return Consulta(actualNode.Rigth, position);
+                    }
+                }
             }
             return default(T);
         }
@@ -212,6 +259,40 @@ namespace ClassLibrary
         bool IsEmpty()
         {
             return this.Root == null;
+        }
+
+        void Read(ref CustomQueue<T> queue, QueuePriority<T> colaPrioridad)
+        {
+            queue.Encolar(colaPrioridad.Remove(BinaryPosition(colaPrioridad.Length), ref colaPrioridad.Root));
+            if (!colaPrioridad.IsEmpty())
+            {
+                Read(ref queue, colaPrioridad);
+            }
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            if (!this.IsEmpty())
+            {
+                var cola = new CustomQueue<T>();
+                QueuePriority<T> colaPrioridad = new QueuePriority<T>(this.PriorityFunc, this.Comparator);
+                colaPrioridad.Root = this.Root;
+                colaPrioridad.Length = this.Length;
+                colaPrioridad.Read(ref cola, colaPrioridad);
+                this.Root = null;
+                this.Length = 0;
+                while (!cola.IsEmpty())
+                {
+                    var value = cola.Desencolar();
+                    this.Insert(value);
+                    yield return value;
+                }
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
+using ClassLibrary;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lab04_ed_2022.Models;
 
 namespace Lab04_ed_2022.Helpers
 {
@@ -20,5 +22,7 @@ namespace Lab04_ed_2022.Helpers
                 return _instance;
             }
         }
+
+        public QueuePriority<PacienteModel> SalaConsultas = new QueuePriority<PacienteModel>(PacienteModel.Prioridad, (PriorityNode<PacienteModel> v1, PriorityNode<PacienteModel> v2) => v1.Priority > v2.Priority);
     }
 }
