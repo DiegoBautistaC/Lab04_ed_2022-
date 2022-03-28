@@ -91,12 +91,16 @@ namespace ClassLibrary
                     if (Comparator(actualNode.Left, actualNode.Rigth))
                     {
                         actualNode.Value = actualNode.Left.Value;
+                        actualNode.Priority = this.PriorityFunc(actualNode.Value);
                         actualNode.Left.Value = aux;
+                        actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
                     }
                     else
                     {
                         actualNode.Value = actualNode.Rigth.Value;
+                        actualNode.Priority = this.PriorityFunc(actualNode.Value);
                         actualNode.Rigth.Value = aux;
+                        actualNode.Rigth.Priority = this.PriorityFunc(actualNode.Rigth.Value);
                     }
                 }
             }
@@ -104,7 +108,9 @@ namespace ClassLibrary
             {
                 T aux = actualNode.Value;
                 actualNode.Value = actualNode.Left.Value;
+                actualNode.Priority = this.PriorityFunc(actualNode.Value);
                 actualNode.Left.Value = aux;
+                actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
             }
         }
 
@@ -126,9 +132,10 @@ namespace ClassLibrary
             {
                 if (position.Length == 1)
                 {
-                    T eleminate = this.Root.Value;
+                    T eliminate = this.Root.Value;
                     this.Root = null;
-                    return eleminate;
+                    this.Length--;
+                    return eliminate;
                 }
                 else
                 {
@@ -144,7 +151,9 @@ namespace ClassLibrary
                             aux.Left = this.Root.Left;
                             aux.Rigth = this.Root.Rigth;
                             this.Root = aux;
+                            this.Root.Priority = this.PriorityFunc(this.Root.Value);
                             this.InvariantSortToDown(ref this.Root);
+                            this.Length--;
                             return eliminate;
                         }
                         else
@@ -154,7 +163,9 @@ namespace ClassLibrary
                             aux.Left = this.Root.Left;
                             aux.Rigth = this.Root.Rigth;
                             this.Root = aux;
+                            this.Root.Priority = this.PriorityFunc(this.Root.Value);
                             this.InvariantSortToDown(ref this.Root);
+                            this.Length--;
                             return eliminate;
                         }
                     }
@@ -187,22 +198,28 @@ namespace ClassLibrary
                     if (Comparator(actualNode.Left, actualNode.Rigth))
                     {
                         actualNode.Value = actualNode.Left.Value;
+                        actualNode.Priority = this.PriorityFunc(actualNode.Value);
                         actualNode.Left.Value = aux;
+                        actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
                         this.InvariantSortToDown(ref actualNode.Left);
                     }
                     else
                     {
                         actualNode.Value = actualNode.Rigth.Value;
+                        actualNode.Priority = this.PriorityFunc(actualNode.Value);
                         actualNode.Rigth.Value = aux;
+                        actualNode.Rigth.Priority = this.PriorityFunc(actualNode.Rigth.Value);
                         this.InvariantSortToDown(ref actualNode.Left);
                     }
                 }
             }
-            else if (actualNode.Rigth == null && Comparator(actualNode.Left, actualNode))
+            else if (actualNode.Rigth == null && actualNode.Left != null && Comparator(actualNode.Left, actualNode))
             {
                 T aux = actualNode.Value;
                 actualNode.Value = actualNode.Left.Value;
+                actualNode.Priority = this.PriorityFunc(actualNode.Value);
                 actualNode.Left.Value = aux;
+                actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
             }
         }
 
@@ -210,11 +227,27 @@ namespace ClassLibrary
         /// Función para consultar el valor que se encuentra delante de la cola con mayor prioridad
         /// </summary>
         /// <returns>Primero valor con mayor prioridad en la cola de prioridad</returns>
-        public T Consulta()
+        public T Consulta(PriorityNode<T> actualNode, string position)
         {
-            if (this.Root != null)
+            if (!this.IsEmpty())
             {
-                return this.Root.Value;
+                if (position.Length == 1)
+                {
+                    return actualNode.Value;
+                }
+                else
+                {
+                    position = position.Substring(1);
+                    int place = Convert.ToInt32(position.Substring(0, 1));
+                    if (place == 0)
+                    {
+                        return Consulta(actualNode.Left, position);
+                    }
+                    else
+                    {
+                        return Consulta(actualNode.Rigth, position);
+                    }
+                }
             }
             return default(T);
         }
@@ -228,13 +261,12 @@ namespace ClassLibrary
             return this.Root == null;
         }
 
-        void Read(ref CustomQueue<T> queue, QueuePriority<T> root)
+        void Read(ref CustomQueue<T> queue, QueuePriority<T> colaPrioridad)
         {
-            if (root != null)
+            queue.Encolar(colaPrioridad.Remove(BinaryPosition(colaPrioridad.Length), ref colaPrioridad.Root));
+            if (!colaPrioridad.IsEmpty())
             {
-                var value = root.Remove();
-                queue.Encolar(value);
-                this.Read(ref queue, root);
+                Read(ref queue, colaPrioridad);
             }
         }
 
@@ -243,11 +275,17 @@ namespace ClassLibrary
             if (!this.IsEmpty())
             {
                 var cola = new CustomQueue<T>();
-                var colaPrioridad = this;
+                QueuePriority<T> colaPrioridad = new QueuePriority<T>(this.PriorityFunc, this.Comparator);
+                colaPrioridad.Root = this.Root;
+                colaPrioridad.Length = this.Length;
                 colaPrioridad.Read(ref cola, colaPrioridad);
+                this.Root = null;
+                this.Length = 0;
                 while (!cola.IsEmpty())
                 {
-                    yield return cola.Desencolar();
+                    var value = cola.Desencolar();
+                    this.Insert(value);
+                    yield return value;
                 }
             }
         }

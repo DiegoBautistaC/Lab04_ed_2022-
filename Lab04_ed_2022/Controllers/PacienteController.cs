@@ -38,6 +38,7 @@ namespace Lab04_ed_2022.Controllers
             {
                 var validacion = PacienteModel.Guardar(new PacienteModel
                 {
+                    ID = Convert.ToInt32(collection["ID"]),
                     Nombres = collection["Nombres"],
                     Apellidos = collection["Apellidos"],
                     FechaDeNacimiento = Convert.ToDateTime(collection["FechaDeNacimiento"]),
