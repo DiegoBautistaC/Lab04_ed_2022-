@@ -23,6 +23,6 @@ namespace Lab04_ed_2022.Helpers
             }
         }
 
-        public QueuePriority<PacienteModel> SalaConsultas = new QueuePriority<PacienteModel>(PacienteModel.Prioridad, (PriorityNode<PacienteModel> v1, PriorityNode<PacienteModel> v2) => v1.Priority > v2.Priority);
+        public QueuePriority<PacienteModel> SalaConsultas = new QueuePriority<PacienteModel>(PacienteModel.Prioridad, (PriorityNode<PacienteModel> v1, PriorityNode<PacienteModel> v2) => v1.Priority > v2.Priority, PacienteModel.PrioridadEntrada);
     }
 }

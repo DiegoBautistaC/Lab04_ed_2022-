@@ -19,11 +19,15 @@ namespace ClassLibrary
         public delegate bool SegundoDelegado(PriorityNode<T> v1, PriorityNode<T> v2);
         SegundoDelegado Comparator;
 
-        public QueuePriority(PrimerDelegado priorityFunc, SegundoDelegado comparator1)
+        public delegate bool TercerDelegado(T v1, T v2);
+        TercerDelegado Comparator2;
+
+        public QueuePriority(PrimerDelegado priorityFunc, SegundoDelegado comparator1, TercerDelegado comparator2)
         {
             this.Root = null;
             this.PriorityFunc = priorityFunc;
             this.Comparator = comparator1;
+            this.Comparator2 = comparator2;
         }
 
         //Método invocable para insertar valores que recibe como parámetro el elemento a insertar.
@@ -275,7 +279,7 @@ namespace ClassLibrary
             if (!this.IsEmpty())
             {
                 var cola = new CustomQueue<T>();
-                QueuePriority<T> colaPrioridad = new QueuePriority<T>(this.PriorityFunc, this.Comparator);
+                QueuePriority<T> colaPrioridad = new QueuePriority<T>(this.PriorityFunc, this.Comparator, this.Comparator2);
                 colaPrioridad.Root = this.Root;
                 colaPrioridad.Length = this.Length;
                 colaPrioridad.Read(ref cola, colaPrioridad);

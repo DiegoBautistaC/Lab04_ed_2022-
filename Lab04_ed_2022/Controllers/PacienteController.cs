@@ -36,15 +36,61 @@ namespace Lab04_ed_2022.Controllers
         {
             try
             {
+                string sexo, metodoIngreso, especializacion;
+                if (collection["Sexo"] == "1")
+                {
+                    sexo = "Femenino";
+                }
+                else if (collection["Sexo"] == "2")
+                {
+                    sexo = "Masculino";
+                }
+                else
+                {
+                    return View();
+                }
+                switch (collection["MetodoIngreso"])
+                {
+                    case "1":
+                        metodoIngreso = "Ambulancia";
+                        break;
+                    case "2":
+                        metodoIngreso = "Asistido";
+                        break;
+                    default:
+                        return View();
+                        break;
+                }
+                switch (collection["Especializacion"])
+                {
+                    case "1":
+                        especializacion = "Traumatología (interna)";
+                        break;
+                    case "2":
+                        especializacion = "Traumatología (expuesta)";
+                        break;
+                    case "3":
+                        especializacion = "Ginecología";
+                        break;
+                    case "4":
+                        especializacion = "Cardiología";
+                        break;
+                    case "5":
+                        especializacion = "Neumología";
+                        break;
+                    default:
+                        return View();
+                        break;
+                }
                 var validacion = PacienteModel.Guardar(new PacienteModel
                 {
                     ID = Convert.ToInt32(collection["ID"]),
                     Nombres = collection["Nombres"],
                     Apellidos = collection["Apellidos"],
                     FechaDeNacimiento = Convert.ToDateTime(collection["FechaDeNacimiento"]),
-                    Sexo = collection["Sexo"],
-                    Especializacion = collection["Especializacion"],
-                    MetodoIngreso = collection["MetodoIngreso"],
+                    Sexo= sexo,
+                    Especializacion = especializacion,
+                    MetodoIngreso = metodoIngreso,
                     HoraIngreso = Convert.ToDateTime(collection["HoraIngreso"])
                 });
                 if (validacion)

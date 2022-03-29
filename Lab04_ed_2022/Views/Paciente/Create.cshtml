@@ -32,19 +32,34 @@
                 <input asp-for="FechaDeNacimiento" class="form-control" />
                 <span asp-validation-for="FechaDeNacimiento" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Sexo" class="control-label"></label>
-                <input asp-for="Sexo" class="form-control" />
+            <div>
+                <label asp-for="Sexo" class="control-label"></label><br />
+                <select asp-for="Sexo" name="Sexo">
+                    <option value="0"></option>
+                    <option value="1">Femenino</option>
+                    <option value="2">Masculino</option>
+                </select>
                 <span asp-validation-for="Sexo" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Especializacion" class="control-label"></label>
-                <input asp-for="Especializacion" class="form-control" />
+            <div>
+                <label asp-for="Especializacion" class="control-label"></label><br />
+                <select asp-for="Especializacion" name="Especializacion">
+                    <option value="0"></option>
+                    <option value="1">Traumatología (interna)</option>
+                    <option value="2">Traumatología (expuesta)</option>
+                    <option value="3">Ginecología</option>
+                    <option value="4">Cardiología</option>
+                    <option value="5">Neumología</option>
+                </select>
                 <span asp-validation-for="Especializacion" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="MetodoIngreso" class="control-label"></label>
-                <input asp-for="MetodoIngreso" class="form-control" />
+            <div>
+                <label asp-for="MetodoIngreso" class="control-label"></label><br />
+                <select asp-for="MetodoIngreso" name="MetodoIngreso">
+                    <option value="0"></option>
+                    <option value="1">Ambulancia</option>
+                    <option value="2">Asistido</option>
+                </select>
                 <span asp-validation-for="MetodoIngreso" class="text-danger"></span>
             </div>
             <div class="form-group">
