@@ -46,7 +46,7 @@ namespace Lab04_ed_2022
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Paciente}/{action=Index}/{id?}");
             });
         }
     }
