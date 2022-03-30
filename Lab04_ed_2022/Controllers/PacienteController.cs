@@ -42,17 +42,18 @@ namespace Lab04_ed_2022.Controllers
                 }
                 var validacion = PacienteModel.Guardar(new PacienteModel
                 {
-                    ID = Convert.ToInt32(collection["ID"]),
+                    ID = Data.Instance.ConteoID + 1,
                     Nombres = collection["Nombres"],
                     Apellidos = collection["Apellidos"],
                     FechaDeNacimiento = Convert.ToDateTime(collection["FechaDeNacimiento"]),
-                    Sexo= collection["Sexo"],
+                    Sexo = collection["Sexo"],
                     Especializacion = collection["Especializacion"],
                     MetodoIngreso = collection["MetodoIngreso"],
-                    HoraIngreso = Convert.ToDateTime(collection["HoraIngreso"])
+                    HoraIngreso = DateTime.Now
                 });
                 if (validacion)
                 {
+                    Data.Instance.ConteoID++;
                     return RedirectToAction(nameof(Index));
                 }
                 return View();

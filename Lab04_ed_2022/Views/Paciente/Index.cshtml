@@ -1,77 +1,82 @@
 ﻿@model IEnumerable<Lab04_ed_2022.Models.PacienteModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Sala de emergencias";
 }
 
 <div class="font-weight-bold">
     <h1 class="text-center">Sala de Emergencias</h1>
 </div>
 
+
+@*<td>
+    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ })
+</td>*@
+
 <p>
-    <a asp-action="Create"> Ingresar nuevo paciente</a>
+    <a asp-action="Create">Ingresar nuevo paciente</a>
 </p>
+
+<button type="button" onclick="location.href='@Url.Action("Create","Paciente")'">Atender</button><br />
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ID)
+                <p class="font-weight-bold">ID</p>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Nombres)
+                <p class="font-weight-bold">Nombres</p>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Apellidos)
+                <p class="font-weight-bold">Apellidos</p>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FechaDeNacimiento)
+                <p class="font-weight-bold">Fecha de Nacimiento</p>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Sexo)
+                <p class="font-weight-bold">Sexo</p>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Especializacion)
+                <p class="font-weight-bold">Especialización</p>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.MetodoIngreso)
+                <p class="font-weight-bold">Método de Ingreso</p>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.HoraIngreso)
+                <p class="font-weight-bold">Hora de Ingreso</p>
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombres)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Apellidos)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaDeNacimiento)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sexo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Especializacion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MetodoIngreso)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HoraIngreso)
-            </td>
-            <td>
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombres)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Apellidos)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaDeNacimiento.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Sexo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Especializacion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MetodoIngreso)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HoraIngreso)
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
