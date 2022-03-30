@@ -14,13 +14,15 @@ namespace Lab04_ed_2022.Controllers
         // GET: PacienteController
         public ActionResult Index()
         {
-            return View(Data.Instance.SalaConsultas);
+            return View(Data.Instance.SalaEmergencias);
         }
 
-        // GET: PacienteController/Details/5
-        public ActionResult Details(int id)
+
+        // GET: PacienteController
+        public ActionResult Atender(IFormCollection collection)
         {
-            return View();
+            PacienteModel.Atender();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: PacienteController/Create
@@ -57,48 +59,6 @@ namespace Lab04_ed_2022.Controllers
                     return RedirectToAction(nameof(Index));
                 }
                 return View();
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: PacienteController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: PacienteController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: PacienteController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: PacienteController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
             }
             catch
             {

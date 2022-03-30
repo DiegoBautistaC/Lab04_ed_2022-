@@ -32,8 +32,13 @@ namespace Lab04_ed_2022.Models
 
         public static bool Guardar(PacienteModel paciente)
         {
-            Data.Instance.SalaConsultas.Insert(paciente);
+            Data.Instance.SalaEmergencias.Insert(paciente);
             return true;
+        }
+
+        public static void Atender()
+        {
+            Data.Instance.SalaEmergencias.Remove();
         }
 
         public static int Prioridad(PacienteModel paciente)
