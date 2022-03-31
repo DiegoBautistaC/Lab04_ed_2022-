@@ -19,10 +19,9 @@ namespace Lab04_ed_2022.Controllers
 
 
         // GET: PacienteController
-        public ActionResult Atender(IFormCollection collection)
+        public ActionResult Atender()
         {
-            PacienteModel.Atender();
-            return RedirectToAction(nameof(Index));
+            return View(PacienteModel.Atender());
         }
 
         // GET: PacienteController/Create

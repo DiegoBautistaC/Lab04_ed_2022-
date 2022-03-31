@@ -36,9 +36,9 @@ namespace Lab04_ed_2022.Models
             return true;
         }
 
-        public static void Atender()
+        public static PacienteModel Atender()
         {
-            Data.Instance.SalaEmergencias.Remove();
+            return Data.Instance.SalaEmergencias.Remove();
         }
 
         public static int Prioridad(PacienteModel paciente)
