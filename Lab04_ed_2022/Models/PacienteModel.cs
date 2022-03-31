@@ -72,9 +72,13 @@ namespace Lab04_ed_2022.Models
             {
                 prioridad += 5;
             }
-            else
+            else if (edadPaciente >= 0 && edadPaciente <= 5)
             {
                 prioridad += 8;
+            }
+            else
+            {
+                prioridad += 0;
             }
             switch (paciente.Especializacion)
             {
