@@ -13,11 +13,6 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="ID" class="control-label"></label>
-                <input asp-for="ID" class="form-control" />
-                <span asp-validation-for="ID" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Nombres" class="control-label"></label>
                 <input asp-for="Nombres" class="form-control" />
                 <span asp-validation-for="Nombres" class="text-danger"></span>
@@ -32,26 +27,33 @@
                 <input asp-for="FechaDeNacimiento" class="form-control" />
                 <span asp-validation-for="FechaDeNacimiento" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Sexo" class="control-label"></label>
-                <input asp-for="Sexo" class="form-control" />
-                <span asp-validation-for="Sexo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Especializacion" class="control-label"></label>
-                <input asp-for="Especializacion" class="form-control" />
-                <span asp-validation-for="Especializacion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MetodoIngreso" class="control-label"></label>
-                <input asp-for="MetodoIngreso" class="form-control" />
-                <span asp-validation-for="MetodoIngreso" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="HoraIngreso" class="control-label"></label>
-                <input asp-for="HoraIngreso" class="form-control" />
-                <span asp-validation-for="HoraIngreso" class="text-danger"></span>
-            </div>
+            <div>
+                <label asp-for="Sexo" class="control-label"></label><br />
+                <select asp-for="Sexo" name="Sexo">
+                    <option value="0"></option>
+                    <option value="Femenino">Femenino</option>
+                    <option value="Masculino">Masculino</option>
+                </select>
+            </div><br />
+            <div>
+                <label asp-for="Especializacion" class="control-label"></label><br />
+                <select asp-for="Especializacion" name="Especializacion">
+                    <option value="0"></option>
+                    <option value="Traumatología (interna)">Traumatología (interna)</option>
+                    <option value="Traumatología (expuesta)">Traumatología (expuesta)</option>
+                    <option value="Ginecología">Ginecología</option>
+                    <option value="Cardiología">Cardiología</option>
+                    <option value="Neumología">Neumología</option>
+                </select>
+            </div><br />
+            <div>
+                <label asp-for="MetodoIngreso" class="control-label"></label><br />
+                <select asp-for="MetodoIngreso" name="MetodoIngreso">
+                    <option value="0"></option>
+                    <option value="Ambulancia">Ambulancia</option>
+                    <option value="Asistido">Asistido</option>
+                </select>
+            </div><br />
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -60,7 +62,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Regresar a la lista</a>
 </div>
 
 @section Scripts {

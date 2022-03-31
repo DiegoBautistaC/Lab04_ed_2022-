@@ -16,14 +16,18 @@ namespace ClassLibrary
         public delegate int PrimerDelegado(T value);
         PrimerDelegado PriorityFunc;
 
-        public delegate bool SegundoDelegado(PriorityNode<T> v1, PriorityNode<T> v2);
+        public delegate int SegundoDelegado(PriorityNode<T> v1, PriorityNode<T> v2);
         SegundoDelegado Comparator;
 
-        public QueuePriority(PrimerDelegado priorityFunc, SegundoDelegado comparator1)
+        public delegate bool TercerDelegado(T v1, T v2);
+        TercerDelegado Comparator2;
+
+        public QueuePriority(PrimerDelegado priorityFunc, SegundoDelegado comparator1, TercerDelegado comparator2)
         {
             this.Root = null;
             this.PriorityFunc = priorityFunc;
             this.Comparator = comparator1;
+            this.Comparator2 = comparator2;
         }
 
         //Método invocable para insertar valores que recibe como parámetro el elemento a insertar.
@@ -85,10 +89,10 @@ namespace ClassLibrary
         {
             if (actualNode.Rigth != null && actualNode.Left != null)
             {
-                if (Comparator(actualNode.Left, actualNode) || Comparator(actualNode.Rigth, actualNode))
+                if (Comparator(actualNode.Left, actualNode) > 0 || Comparator(actualNode.Rigth, actualNode) > 0)
                 {
                     T aux = actualNode.Value;
-                    if (Comparator(actualNode.Left, actualNode.Rigth))
+                    if (Comparator(actualNode.Left, actualNode.Rigth) > 0)
                     {
                         actualNode.Value = actualNode.Left.Value;
                         actualNode.Priority = this.PriorityFunc(actualNode.Value);
@@ -103,14 +107,72 @@ namespace ClassLibrary
                         actualNode.Rigth.Priority = this.PriorityFunc(actualNode.Rigth.Value);
                     }
                 }
+                else if (Comparator(actualNode.Left, actualNode) == 0 || Comparator(actualNode.Rigth, actualNode) == 0)
+                {
+                    T aux = actualNode.Value;
+                    if (Comparator(actualNode.Left, actualNode) == 0 && Comparator(actualNode.Rigth, actualNode) == 0)
+                    {
+                        if (Comparator2(actualNode.Left.Value, actualNode.Value) || Comparator2(actualNode.Rigth.Value, actualNode.Value))
+                        {
+                            if (Comparator2(actualNode.Left.Value, actualNode.Rigth.Value))
+                            {
+                                actualNode.Value = actualNode.Left.Value;
+                                actualNode.Priority = this.PriorityFunc(actualNode.Value);
+                                actualNode.Left.Value = aux;
+                                actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
+                            }
+                            else
+                            {
+                                actualNode.Value = actualNode.Rigth.Value;
+                                actualNode.Priority = this.PriorityFunc(actualNode.Value);
+                                actualNode.Rigth.Value = aux;
+                                actualNode.Rigth.Priority = this.PriorityFunc(actualNode.Rigth.Value);
+                            }
+                        }
+                    }
+                    else if (Comparator(actualNode.Left, actualNode) == 0)
+                    {
+                        if (Comparator2(actualNode.Left.Value, actualNode.Value))
+                        {
+                            actualNode.Value = actualNode.Left.Value;
+                            actualNode.Priority = this.PriorityFunc(actualNode.Value);
+                            actualNode.Left.Value = aux;
+                            actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
+                        }
+                    }
+                    else
+                    {
+                        if (Comparator2(actualNode.Rigth.Value, actualNode.Value))
+                        {
+                            actualNode.Value = actualNode.Rigth.Value;
+                            actualNode.Priority = this.PriorityFunc(actualNode.Value);
+                            actualNode.Rigth.Value = aux;
+                            actualNode.Rigth.Priority = this.PriorityFunc(actualNode.Rigth.Value);
+                        }
+                    }
+                }
             }
-            else if (actualNode.Rigth == null && Comparator(actualNode.Left, actualNode))
+            else if (actualNode.Rigth == null)
             {
-                T aux = actualNode.Value;
-                actualNode.Value = actualNode.Left.Value;
-                actualNode.Priority = this.PriorityFunc(actualNode.Value);
-                actualNode.Left.Value = aux;
-                actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
+                if (Comparator(actualNode.Left, actualNode) > 0)
+                {
+                    T aux = actualNode.Value;
+                    actualNode.Value = actualNode.Left.Value;
+                    actualNode.Priority = this.PriorityFunc(actualNode.Value);
+                    actualNode.Left.Value = aux;
+                    actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
+                }
+                else if (Comparator(actualNode.Left, actualNode) == 0)
+                {
+                    if (Comparator2(actualNode.Left.Value, actualNode.Value))
+                    {
+                        T aux = actualNode.Value;
+                        actualNode.Value = actualNode.Left.Value;
+                        actualNode.Priority = this.PriorityFunc(actualNode.Value);
+                        actualNode.Left.Value = aux;
+                        actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
+                    }
+                }
             }
         }
 
@@ -192,10 +254,10 @@ namespace ClassLibrary
         {
             if (actualNode.Rigth != null && actualNode.Left != null)
             {
-                if (Comparator(actualNode.Left, actualNode) || Comparator(actualNode.Rigth, actualNode))
+                if (Comparator(actualNode.Left, actualNode) > 0 || Comparator(actualNode.Rigth, actualNode) > 0)
                 {
                     T aux = actualNode.Value;
-                    if (Comparator(actualNode.Left, actualNode.Rigth))
+                    if (Comparator(actualNode.Left, actualNode.Rigth) > 0)
                     {
                         actualNode.Value = actualNode.Left.Value;
                         actualNode.Priority = this.PriorityFunc(actualNode.Value);
@@ -212,14 +274,71 @@ namespace ClassLibrary
                         this.InvariantSortToDown(ref actualNode.Left);
                     }
                 }
+                else if (Comparator(actualNode.Left, actualNode) == 0 || Comparator(actualNode.Rigth, actualNode) == 0)
+                {
+                    T aux = actualNode.Value;
+                    if (Comparator(actualNode.Left, actualNode) == 0 && Comparator(actualNode.Rigth, actualNode) == 0)
+                    {
+                        if (Comparator2(actualNode.Left.Value, actualNode.Value) || Comparator2(actualNode.Rigth.Value, actualNode.Value))
+                        {
+                            if (Comparator2(actualNode.Left.Value, actualNode.Rigth.Value))
+                            {
+                                actualNode.Value = actualNode.Left.Value;
+                                actualNode.Priority = this.PriorityFunc(actualNode.Value);
+                                actualNode.Left.Value = aux;
+                                actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
+                            }
+                            else
+                            {
+                                actualNode.Value = actualNode.Rigth.Value;
+                                actualNode.Priority = this.PriorityFunc(actualNode.Value);
+                                actualNode.Rigth.Value = aux;
+                                actualNode.Rigth.Priority = this.PriorityFunc(actualNode.Rigth.Value);
+                            }
+                        }
+                    }
+                    else if (Comparator(actualNode.Left, actualNode) == 0)
+                    {
+                        if (Comparator2(actualNode.Left.Value, actualNode.Value))
+                        {
+                            actualNode.Value = actualNode.Left.Value;
+                            actualNode.Priority = this.PriorityFunc(actualNode.Value);
+                            actualNode.Left.Value = aux;
+                            actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
+                        }
+                    }
+                    else
+                    {
+                        if (Comparator2(actualNode.Rigth.Value, actualNode.Value))
+                        {
+                            actualNode.Value = actualNode.Rigth.Value;
+                            actualNode.Priority = this.PriorityFunc(actualNode.Value);
+                            actualNode.Rigth.Value = aux;
+                            actualNode.Rigth.Priority = this.PriorityFunc(actualNode.Rigth.Value);
+                        }
+                    }
+                }
             }
-            else if (actualNode.Rigth == null && actualNode.Left != null && Comparator(actualNode.Left, actualNode))
+            else if (actualNode.Rigth == null && actualNode.Left != null)
             {
                 T aux = actualNode.Value;
-                actualNode.Value = actualNode.Left.Value;
-                actualNode.Priority = this.PriorityFunc(actualNode.Value);
-                actualNode.Left.Value = aux;
-                actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
+                if (Comparator(actualNode.Left, actualNode) > 0)
+                {
+                    actualNode.Value = actualNode.Left.Value;
+                    actualNode.Priority = this.PriorityFunc(actualNode.Value);
+                    actualNode.Left.Value = aux;
+                    actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
+                }
+                else if (Comparator(actualNode.Left, actualNode) == 0)
+                {
+                    if (Comparator2(actualNode.Left.Value, actualNode.Value))
+                    {
+                        actualNode.Value = actualNode.Left.Value;
+                        actualNode.Priority = this.PriorityFunc(actualNode.Value);
+                        actualNode.Left.Value = aux;
+                        actualNode.Left.Priority = this.PriorityFunc(actualNode.Left.Value);
+                    }
+                }
             }
         }
 
@@ -275,7 +394,7 @@ namespace ClassLibrary
             if (!this.IsEmpty())
             {
                 var cola = new CustomQueue<T>();
-                QueuePriority<T> colaPrioridad = new QueuePriority<T>(this.PriorityFunc, this.Comparator);
+                QueuePriority<T> colaPrioridad = new QueuePriority<T>(this.PriorityFunc, this.Comparator, this.Comparator2);
                 colaPrioridad.Root = this.Root;
                 colaPrioridad.Length = this.Length;
                 colaPrioridad.Read(ref cola, colaPrioridad);

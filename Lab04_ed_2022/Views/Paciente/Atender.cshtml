@@ -1,0 +1,65 @@
+﻿@model Lab04_ed_2022.Models.PacienteModel
+
+@{
+    ViewData["Title"] = "Atención";
+}
+
+<h1>Atendiendo a @Html.DisplayFor(modelo => modelo.Nombres) @Html.DisplayFor(modelo => modelo.Apellidos)</h1>
+
+<div>
+    <h4>Hora de ingreso: @Html.DisplayFor(modelo => modelo.HoraIngreso)</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            <p class="font-weight-bold">ID</p>
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ID)
+        </dd>
+        <dt class = "col-sm-2">
+            <p class="font-weight-bold">Nombres</p>
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Nombres)
+        </dd>
+        <dt class = "col-sm-2">
+            <p class="font-weight-bold">Apellidos</p>
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Apellidos)
+        </dd>
+        <dt class = "col-sm-2">
+            <p class="font-weight-bold">Fecha de Nacimiento</p>
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FechaDeNacimiento)
+        </dd>
+        <dt class = "col-sm-2">
+            <p class="font-weight-bold">Sexo</p>
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Sexo)
+        </dd>
+        <dt class = "col-sm-2">
+            <p class="font-weight-bold">Especialización</p>
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Especializacion)
+        </dd>
+        <dt class = "col-sm-2">
+            <p class="font-weight-bold">Método de ingreso</p>
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MetodoIngreso)
+        </dd>
+        <dt class = "col-sm-2">
+            <p class="font-weight-bold">Hora de ingreso</p>
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.HoraIngreso)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Index">Regresar a lista</a>
+</div>

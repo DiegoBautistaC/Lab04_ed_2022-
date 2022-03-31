@@ -14,13 +14,14 @@ namespace Lab04_ed_2022.Controllers
         // GET: PacienteController
         public ActionResult Index()
         {
-            return View(Data.Instance.SalaConsultas);
+            return View(Data.Instance.SalaEmergencias);
         }
 
-        // GET: PacienteController/Details/5
-        public ActionResult Details(int id)
+
+        // GET: PacienteController
+        public ActionResult Atender()
         {
-            return View();
+            return View(PacienteModel.Atender());
         }
 
         // GET: PacienteController/Create
@@ -36,64 +37,27 @@ namespace Lab04_ed_2022.Controllers
         {
             try
             {
+                if (collection["Sexo"] == "0" || collection["Especializacion"] == "0" || collection["MetodoIngreso"] == "0")
+                {
+                    return View();
+                }
                 var validacion = PacienteModel.Guardar(new PacienteModel
                 {
-                    ID = Convert.ToInt32(collection["ID"]),
+                    ID = Data.Instance.ConteoID + 1,
                     Nombres = collection["Nombres"],
                     Apellidos = collection["Apellidos"],
                     FechaDeNacimiento = Convert.ToDateTime(collection["FechaDeNacimiento"]),
                     Sexo = collection["Sexo"],
                     Especializacion = collection["Especializacion"],
                     MetodoIngreso = collection["MetodoIngreso"],
-                    HoraIngreso = Convert.ToDateTime(collection["HoraIngreso"])
+                    HoraIngreso = DateTime.Now
                 });
                 if (validacion)
                 {
+                    Data.Instance.ConteoID++;
                     return RedirectToAction(nameof(Index));
                 }
                 return View();
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: PacienteController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: PacienteController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: PacienteController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: PacienteController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
             }
             catch
             {

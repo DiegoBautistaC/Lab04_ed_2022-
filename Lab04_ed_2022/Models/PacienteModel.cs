@@ -21,16 +21,10 @@ namespace Lab04_ed_2022.Models
 
         public DateTime FechaDeNacimiento { get; set; }
 
-        [MaxLength(9)]
-        [MinLength(1)]
         public string Sexo { get; set; }
 
-        [MaxLength(23)]
-        [MinLength(5)]
         public string Especializacion { get; set; }
 
-        [MaxLength(10)]
-        [MinLength(5)]
         public string MetodoIngreso { get; set; }
 
         public DateTime HoraIngreso { get; set; }
@@ -38,8 +32,13 @@ namespace Lab04_ed_2022.Models
 
         public static bool Guardar(PacienteModel paciente)
         {
-            Data.Instance.SalaConsultas.Insert(paciente);
+            Data.Instance.SalaEmergencias.Insert(paciente);
             return true;
+        }
+
+        public static PacienteModel Atender()
+        {
+            return Data.Instance.SalaEmergencias.Remove();
         }
 
         public static int Prioridad(PacienteModel paciente)
@@ -73,9 +72,13 @@ namespace Lab04_ed_2022.Models
             {
                 prioridad += 5;
             }
-            else
+            else if (edadPaciente >= 0 && edadPaciente <= 5)
             {
                 prioridad += 8;
+            }
+            else
+            {
+                prioridad += 0;
             }
             switch (paciente.Especializacion)
             {
@@ -109,6 +112,40 @@ namespace Lab04_ed_2022.Models
                     break;
             }
             return prioridad;
+        }
+
+        public static bool PrioridadEntrada(PacienteModel primerP, PacienteModel segundoP)
+        {
+            if (primerP.HoraIngreso.Hour > segundoP.HoraIngreso.Hour)
+            {
+                return false;
+            }
+            else if (primerP.HoraIngreso.Hour < segundoP.HoraIngreso.Hour)
+            {
+                return true;
+            }
+            else
+            {
+                if (primerP.HoraIngreso.Minute > segundoP.HoraIngreso.Minute)
+                {
+                    return false;
+                }
+                else if (primerP.HoraIngreso.Minute < segundoP.HoraIngreso.Minute)
+                {
+                    return true;
+                }
+                else
+                {
+                    if (primerP.HoraIngreso.Second > segundoP.HoraIngreso.Second)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+            }
         }
 
         static int Edad(DateTime fechaNacimiento)
